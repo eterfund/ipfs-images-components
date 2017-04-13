@@ -4,6 +4,7 @@ const Promise = require('bluebird');
 
 const logging = require('./logging').getWrapperForModule('cleaner');
 const redis = require('./redis');
+const Ipfs = require('./ipfs');
 
 /**
  * Represents a cleaner for attachments.
@@ -76,10 +77,13 @@ class Cleaner {
 
       logging.info(`Deleting ${list.length} attachments`);
 
+      let ipfs = new Ipfs();
+
       return Promise.map(list, (hash) => {
         return Promise.join(
           redis.delAsync(this.prefix + hash),
-          redis.zremAsync(this.index, hash)
+          redis.zremAsync(this.index, hash),
+          ipfs.unpin(hash)
         );
       }).then(() => {
         logging.info(`Successfully deleted ${list.length} attachments`);
