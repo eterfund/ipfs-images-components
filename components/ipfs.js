@@ -20,6 +20,16 @@ class Ipfs {
   }
 
   /**
+   * Stores an IPFS object from a given path locally to disk.
+   * @param  {String}  hash IPFS hash.
+   * @return {Promise}      Pinned object.
+   */
+  pin(hash) {
+    logging.verbose(`Pinning object ${hash} to local storage`);
+    return this.ipfs.pin.add(hash);
+  }
+
+  /**
    * Serves attachment to the client.
    * @param  {String} hash IPFS hash.
    * @return {Promise}     Readable Stream of attachment.
@@ -33,6 +43,17 @@ class Ipfs {
 
       return stream;
     });
+  }
+
+  /**
+   * Removes the pin from the given object allowing it to be garbage
+   * collected if needed.
+   * @param  {String}  hash IPFS hash.
+   * @return {Promise}      Unpinned object.
+   */
+  unpin(hash) {
+    logging.verbose(`Unpinning object ${hash} from local storage`);
+    return this.ipfs.pin.rm(hash);
   }
 
   /**
