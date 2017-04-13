@@ -72,7 +72,7 @@ class Ipfs {
     let hash;
     return this.ipfs.files.add(files).then((res) => {
       hash = res;
-      return this.ipfs.pin.add(hash);
+      return this.pin(hash);
     }).then(() => {
       return Promise.resolve(hash);
     });
