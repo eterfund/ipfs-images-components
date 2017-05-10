@@ -152,6 +152,7 @@ Represents a cleaner for attachments.
 * [Cleaner](#Cleaner)
     * [new Cleaner(expire, interval, index, prefix)](#new_Cleaner_new)
     * [.buildIndex()](#Cleaner+buildIndex) ⇒ <code>Promise</code>
+    * [.delAttachment(hash)](#Cleaner+delAttachment) ⇒ <code>Promise</code>
     * [.run()](#Cleaner+run) ⇒ <code>Promise</code>
 
 <a name="new_Cleaner_new"></a>
@@ -174,6 +175,18 @@ Builds sorted set of datetimes of already uploaded attachments.
 
 **Kind**: instance method of [<code>Cleaner</code>](#Cleaner)  
 **Returns**: <code>Promise</code> - Number of elements added to the set.  
+<a name="Cleaner+delAttachment"></a>
+
+### cleaner.delAttachment(hash) ⇒ <code>Promise</code>
+Deletes attachment for hash from both IPFS and Redis.
+
+**Kind**: instance method of [<code>Cleaner</code>](#Cleaner)  
+**Returns**: <code>Promise</code> - Resolves if deleted, rejects otherwise.  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| hash | <code>String</code> | IPFS hash of attachment. |
+
 <a name="Cleaner+run"></a>
 
 ### cleaner.run() ⇒ <code>Promise</code>

@@ -58,6 +58,27 @@ class Cleaner {
   }
 
   /**
+   * Deletes attachment for hash from both IPFS and Redis.
+   * @param  {String}  hash IPFS hash of attachment.
+   * @return {Promise}      Resolves if deleted, rejects otherwise.
+   */
+  delAttachment(hash) {
+    logging.info(`Deleting attachment ${hash}`);
+
+    let ipfs = new Ipfs();
+    let metadata = new Metadata();
+
+    return Promise.join(
+      metadata.delRecord(hash),
+      ipfs.unpin(hash)
+    ).then(() => {
+      logging.info(`Successfully deleted attachment ${hash}`);
+    }).catch((error) => {
+      logging.error(error);
+    });
+  }
+
+  /**
    * Runs cleaner on the current set.
    * @return {Promise} Number of deleted attachments.
    */
