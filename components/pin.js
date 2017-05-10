@@ -47,6 +47,28 @@ class Pin {
       throw error;
     });
   }
+
+  /**
+   * Checks if IPFS objects for hashes found in Redis are stored locally.
+   * @return {Promise} Resolves with array of unpinned hashes or rejects with
+   *                   error. If array is empty, all hashes are pinned.
+   */
+  check() {
+    logging.info('Checking if all attachments are locally stored');
+
+    return Promise.join(
+      this.ipfs.refs.local(),
+      redis.keysAsync(this.prefix + '*')
+    ).spread((refs, keys) => {
+      let hashes = keys.map((key) => key.split('_')[1]);
+      logging.info(`Found ${hashes.length} attachments
+                    and ${refs.length} local objects`);
+
+      return hashes.filter(refs.includes);
+    }).catch((error) => {
+      throw error;
+    });
+  }
 }
 
 module.exports = Pin;

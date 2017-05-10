@@ -129,6 +129,7 @@ to pin attachments.
 * [Pin](#Pin)
     * [new Pin()](#new_Pin_new)
     * [.all()](#Pin+all) ⇒ <code>Promise</code>
+    * [.check()](#Pin+check) ⇒ <code>Promise</code>
 
 <a name="new_Pin_new"></a>
 
@@ -142,6 +143,14 @@ Pins attachments to local storage for which there are records in Redis.
 
 **Kind**: instance method of [<code>Pin</code>](#Pin)  
 **Returns**: <code>Promise</code> - Number of pinned attachments.  
+<a name="Pin+check"></a>
+
+### pin.check() ⇒ <code>Promise</code>
+Checks if IPFS objects for hashes found in Redis are stored locally.
+
+**Kind**: instance method of [<code>Pin</code>](#Pin)  
+**Returns**: <code>Promise</code> - Resolves with array of unpinned hashes or rejects with
+                  error. If array is empty, all hashes are pinned.  
 <a name="Cleaner"></a>
 
 ## Cleaner
