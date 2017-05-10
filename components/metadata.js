@@ -61,6 +61,21 @@ class Metadata {
       return data;
     });
   }
+
+  /**
+   * Deletes record for attachment from Redis.
+   * @param  {String}  hash IPFS hash of attachment.
+   * @return {Promise}      Resolves if deleted, otherwise rejects.
+   */
+  delRecord(hash) {
+    let record = String(this.prefix + hash);
+    logging.verbose(`Delete record ${record} from Redis`);
+
+    return Promise.join(
+      redis.delAsync(this.prefix + hash),
+      redis.zremAsync(this.index, hash)
+    );
+  }
 }
 
 module.exports = Metadata;

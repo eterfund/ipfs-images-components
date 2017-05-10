@@ -3,6 +3,7 @@
 const Promise = require('bluebird');
 
 const logging = require('./logging').getWrapperForModule('cleaner');
+const Metadata = require('./metadata');
 const redis = require('./redis');
 const Ipfs = require('./ipfs');
 
@@ -78,11 +79,11 @@ class Cleaner {
       logging.info(`Deleting ${list.length} attachments`);
 
       let ipfs = new Ipfs();
+      let metadata = new Metadata();
 
       return Promise.map(list, (hash) => {
         return Promise.join(
-          redis.delAsync(this.prefix + hash),
-          redis.zremAsync(this.index, hash),
+          metadata.delRecord(hash),
           ipfs.unpin(hash)
         );
       }).then(() => {
