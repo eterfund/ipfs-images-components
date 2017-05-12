@@ -64,7 +64,16 @@ class Pin {
       logging.info(`Found ${hashes.length} attachments
                     and ${refs.length} local objects`);
 
-      return hashes.filter(refs.includes);
+      // if nothing is pinned
+      if (!refs.length)
+        return hashes;
+
+      // if no hashes is found no need to filter
+      if (!hashes.length)
+        return []
+
+      // filter pinned attachments from an array of hashes
+      return hashes.filter(Array.prototype.includes.bind(refs));
     }).catch((error) => {
       throw error;
     });
