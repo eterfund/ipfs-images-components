@@ -1,7 +1,7 @@
 {
-  "name": "attachments-components",
+  "name": "ipfs-images-components",
   "version": "1.0.0",
-  "description": "Components for building attachments server",
+  "description": "Components for building IPFS image server",
   "main": "index.js",
   "scripts": {
     "test": "mocha"
