@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const ipfsAPI = require('ipfs-api');
+const path = require('path');
 
 const FileNotFoundError = require('./errors').FileNotFoundError;
 const logging = require('./logging').getWrapperForModule('ipfs');
@@ -65,7 +66,7 @@ class Ipfs {
     logging.verbose(`Uploading '${file.originalFilename}' to IPFS`);
 
     let files = [{
-      path: file.path,
+      path: path.basename(file.path),
       content: fs.createReadStream(file.path),
     }];
 
