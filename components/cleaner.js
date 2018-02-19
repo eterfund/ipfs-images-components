@@ -69,12 +69,12 @@ class Cleaner {
     let metadata = new Metadata();
 
     return Promise.join(
-      metadata.delRecord(hash),
       ipfs.unpin(hash)
     ).then(() => {
-      logging.info(`Successfully deleted attachment ${hash}`);
-    }).catch((error) => {
-      logging.error(error);
+      logging.info(`Successfully unpinned attachment ${hash}`);
+      return metadata.delRecord(hash);
+    }).then(() => {
+      logging.info(`Deleted metadata for ${hash}`);
     });
   }
 
@@ -102,12 +102,9 @@ class Cleaner {
       let ipfs = new Ipfs();
       let metadata = new Metadata();
 
-      return Promise.map(list, (hash) => {
-        return Promise.join(
-          metadata.delRecord(hash),
-          ipfs.unpin(hash)
-        );
-      }).then(() => {
+      return Promise.mapSeries(list, (hash) => 
+        this.delAttachment(hash)
+      ).then(() => {
         logging.info(`Successfully deleted ${list.length} attachments`);
       });
     }).catch((error) => {
