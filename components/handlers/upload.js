@@ -49,14 +49,14 @@ module.exports = function (storage, metadataStorage, options) {
     };
 
     let addMetadata = (hash) => {
-      return metadataStorage.addRecord(hash, mimetype, size);
+      return metadataStorage.addRecord(hash, mimetype, size).then(() => hash);
     };
 
     let deleteFile = () => {
       return fs.unlink(tmpPath);
     };
 
-    let sendResponse = () => {
+    let sendResponse = (hash) => {
       response.json({
         id: hash,
         filename: filename,
