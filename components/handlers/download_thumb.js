@@ -2,7 +2,7 @@
 
 const Promise = require('bluebird');
 
-const FileNotFoundError = require('../errors').FileNotFoundError;
+const { FileNotFoundError } = require('../errors');
 const logging = require('../logging').getWrapperForModule('download_thumb');
 
 /**

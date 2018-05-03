@@ -5,7 +5,7 @@ const Promise = require('bluebird');
 const logging = require('./logging').getWrapperForModule('cleaner');
 const Metadata = require('./metadata');
 const redis = require('./redis');
-const Ipfs = require('./ipfs');
+const Ipfs = require('./storage-backends/ipfs');
 
 /**
  * Represents a cleaner for attachments.

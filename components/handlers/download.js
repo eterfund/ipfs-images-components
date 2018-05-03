@@ -3,7 +3,7 @@
 const Promise = require('bluebird');
 
 const { FileNotFoundError } = require('../errors');
-const logging = request('../logging').getWrapperForModule('download');
+const logging = require('../logging').getWrapperForModule('download');
 
 /**
  * Creates route handler for /<base-url>/:hash/:filename.
@@ -40,6 +40,7 @@ module.exports = function (storage, metadataStorage, options) {
     };
 
     let handleError = (error) => {
+      console.log(error);
       if (error instanceof FileNotFoundError) {
         response.sendStatus(404);
       } else {

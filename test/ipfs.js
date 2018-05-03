@@ -42,7 +42,6 @@ describe('Ipfs', () => {
     it('should return hash', function (done) {
       this.timeout(30000);
       ipfs.add(file).then((hash) => {
-        hash = hash[0].hash;
         hash.should.startWith('Qm');
         hash.should.have.length(46);
         done();

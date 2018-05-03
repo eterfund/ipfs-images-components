@@ -23,10 +23,12 @@ class FilesystemStorage {
   add (file) {
     logging.verbose(`Uploading '${file.originalFilename}' to filesystem`);
 
-    const hash = this.computeHash(file);
-    const filePath = this.getFilePath(hash);
-
-    return fs.outputFile(filePath, file).then(() => hash);
+    return fs.readFile(file.path).then(content => {
+      const hash = this.computeHash(content);
+      const filePath = this.getFilePath(hash);
+  
+      return fs.outputFile(filePath, content).then(() => hash);
+    });
   }
 
   /**
@@ -45,13 +47,13 @@ class FilesystemStorage {
   /**
    * Gets file from IPFS.
    * @param  {String} hash IPFS hash.
-   * @return {Promise<ReadableStream>} Readable Stream of attachment.
+   * @return {ReadableStream} Readable Stream of attachment.
    */
   get (hash) {
     logging.verbose(`Serving attachment for ${hash} from filesystem`);
 
     const filePath = this.getFilePath(hash);
-    return fs.readFile(filePath);
+    return fs.createReadStream(filePath);
   }
 
 
@@ -67,3 +69,5 @@ class FilesystemStorage {
     return path.join(this.basePath, dirName, fileName);
   }
 }
+
+module.exports = FilesystemStorage;

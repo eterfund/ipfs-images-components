@@ -2,10 +2,9 @@
 
 const path = require('path');
 
-let mods = [
+const mods = [
   'cleaner',
   'errors',
-  'ipfs',
   'logging',
   'metadata',
   'pin',
@@ -14,7 +13,18 @@ let mods = [
   'thumbnail',
 ];
 
-module.exports = {};
+module.exports = {
+  handlers: {
+    delAttachment: require('./components/handlers/del_attachment'),
+    download: require('./components/handlers/download'),
+    downloadThumb: require('./components/handlers/download_thumb'),
+    upload: require('./components/handlers/upload'),
+  },
+  storageBackends: {
+    FilesystemStorage: require('./components/storage-backends/filesystem'),
+    IpfsStorage: require('./components/storage-backends/ipfs'),
+  },
+};
 
 mods.forEach((mod) => {
   module.exports[mod] = require(

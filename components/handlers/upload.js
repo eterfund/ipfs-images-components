@@ -48,10 +48,7 @@ module.exports = function (storage, metadataStorage, options) {
       return storage.add(file);
     };
 
-    let addMetadata = (result) => {
-      result = result[0];
-      hash = result.hash;
-
+    let addMetadata = (hash) => {
       return metadataStorage.addRecord(hash, mimetype, size);
     };
 
@@ -81,5 +78,3 @@ module.exports = function (storage, metadataStorage, options) {
       .catch((error) => logging.error(error));
   };
 };
-
-module.exports = upload;
