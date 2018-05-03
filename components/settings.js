@@ -1,9 +1,6 @@
-/* global appRoot */
-
 'use strict';
 
 const fs = require('fs');
-const path = require('path');
 
 /**
  * Parses JSON from project root to array.
@@ -14,7 +11,7 @@ function parseJson() {
 
   try {
     parsedJson = JSON.parse(
-      fs.readFileSync(path.join(appRoot, 'config.json'), {encoding: 'utf8'})
+      fs.readFileSync('config.json', {encoding: 'utf8'})
     );
   } catch (error) {
     if (error instanceof SyntaxError) {

@@ -2,15 +2,14 @@ const fs = require('fs');
 const ipfsAPI = require('ipfs-api');
 const path = require('path');
 
-const FileNotFoundError = require('../errors').FileNotFoundError;
+const { FileNotFoundError } = require('../errors');
 const logging = require('../logging').getWrapperForModule('ipfs');
-const settings = require('../settings');
 
 /**
  * Represents an interface to interact with IPFS daemon to download and upload
  * attachments.
  */
-class Ipfs {
+class IpfsStorage {
   /**
    * constructor for Ipfs class.
    */
@@ -80,4 +79,4 @@ class Ipfs {
   }
 }
 
-module.exports = Ipfs;
+module.exports = IpfsStorage;

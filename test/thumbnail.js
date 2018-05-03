@@ -6,6 +6,7 @@ const path = require('path');
 const Promise = require('bluebird');
 
 const settings = require('../components/settings');
+const IpfsStorage = require('../components/storage-backends/ipfs');
 const Thumbnail = require('../components/thumbnail');
 
 chai.should();
@@ -13,16 +14,12 @@ Promise.promisifyAll(fs);
 
 // ipfs daemon and redis must be running
 describe('Thumbnail', () => {
-  const thumbnail = new Thumbnail();
+  const thumbnail = new Thumbnail(new IpfsStorage(settings.ipfs.url));
 
   // hash must exist
   const hash = 'QmTP9aq4Af53gRSCfPZJPCQrJt6J7dWyu9xoypG1ToFBBK';
   const size = Number(
-    settings.thumbnails.sizes[
-      Math.floor(
-        Math.random() * settings.thumbnails.sizes.length
-      )
-    ]
+    settings.thumbnails.sizes[0]
   );
 
   describe('#serve(hash, size)', () => {

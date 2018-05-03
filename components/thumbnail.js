@@ -6,7 +6,6 @@ const Promise = require('bluebird');
 const sharp = require('sharp');
 
 const FileNotFoundError = require('./errors').FileNotFoundError;
-const Ipfs = require('./ipfs');
 const logging = require('./logging').getWrapperForModule('thumbnail');
 const settings = require('./settings');
 
@@ -21,11 +20,10 @@ class Thumbnail {
   /**
    * Constructor for Thumbnail class.
    */
-  constructor() {
+  constructor (storage) {
     this.cache = settings.thumbnails.cache;
     this.sizes = settings.thumbnails.sizes;
-
-    this.ipfs = new Ipfs();
+    this.storage = storage;
 
     if (this.cache) {
       logging.verbose('Thumbnail cache enabled');
@@ -36,7 +34,7 @@ class Thumbnail {
 
   /**
    * Concatenates pieces to return path to directory for thumbnail.
-   * @param  {String} hash IPFS hash.
+   * @param  {String} hash File hash.
    * @param  {Number} size Size of thumbnail.
    * @return {String}      Path to directory for thumbnail.
    */
@@ -44,12 +42,13 @@ class Thumbnail {
     // QmABHA5h..., 128 => /path/128/AB/
     return path.join(settings.thumbnails.path,
                      String(size),
+                     hash.slice(0, 2),
                      hash.slice(2, 4));
   }
 
   /**
    * Concatenates pieces to return path to thumbnail.
-   * @param  {String} hash IPFS hash.
+   * @param  {String} hash File hash.
    * @param  {Number} size Size of thumbnail.
    * @return {String}      Path to thumbnail.
    */
@@ -61,7 +60,7 @@ class Thumbnail {
 
   /**
    * Serves thumbnail.
-   * @param  {String} hash IPFS hash.
+   * @param  {String} hash File hash.
    * @param  {Number} size Size of thumbnail.
    * @return {Promise}     Stream of thumbnail.
    */
@@ -69,8 +68,8 @@ class Thumbnail {
     if (this.sizes.indexOf(size) == -1) size = THUMB_DIMENSIONS;
 
     let core = function(hash, size) {
-      logging.verbose(`Getting original image for ${hash} from IPFS`);
-      return this.ipfs.serve(hash).then((stream) => {
+      logging.verbose(`Getting original image for ${hash} from storage`);
+      return this.storage.get(hash).then((stream) => {
         return this.create(stream, hash, size).then((stream) => {
           logging.verbose(`Created ${size}x${size} thumbnail for ${hash}`);
           return stream;
@@ -116,7 +115,7 @@ class Thumbnail {
   /**
    * Creates thumbnail for image.
    * @param  {Stream}  inputStream Stream of image.
-   * @param  {String}  hash        IPFS hash of thumbnail.
+   * @param  {String}  hash        Hash of thumbnail.
    * @param  {Number}  size        Size of thumbnail.
    * @return {Promise}             Stream of thumbnail.
    */
