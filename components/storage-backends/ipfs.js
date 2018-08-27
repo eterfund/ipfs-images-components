@@ -68,6 +68,9 @@ class IpfsStorage {
     });
   }
 
+  getLocalObjects() {
+    return this.ipfs.pin.ls();
+  }
 
   /**
    * Pins a file by hash.

@@ -85,30 +85,35 @@ class Cleaner {
   run() {
     let timestamp = Date.now() - this.expire * 1000;
     let date = new Date(timestamp).toUTCString();
+    const ipfs = new Ipfs();
 
     logging.info(`Performing cleanup of attachments uploaded earlier
                   than '${date}'`);
 
-    return redis.zrangebyscoreAsync(this.index, [
-      '-inf', timestamp,
-    ]).then((list) => {
-      if (list.length <= 0) {
-        logging.info('Nothing to clean');
-        return Promise.resolve(list.length);
-      }
+    logging.info(`Loading list of local attachments (ipfs pin ls). Please be patient, this can take a lot of time`);
 
-      logging.info(`Deleting ${list.length} attachments`);
+    return ipfs.getLocalObjects().then(hashes => {
+      const hashSet = new Set(hashes);
+      logging.info('Looking for outdated attachments...');
+      return redis.zrangebyscoreAsync(this.index, [
+        '-inf', timestamp,
+      ]).then(list => {
+        list = list.filter(hash => hashSet.has(hash));
+        if (list.length <= 0) {
+          logging.info('Nothing to clean');
+          return Promise.resolve(list.length);
+        }
 
-      let ipfs = new Ipfs();
-      let metadata = new Metadata();
+        logging.info(`Deleting ${list.length} attachments`);
 
-      return Promise.mapSeries(list, (hash) => 
-        this.delAttachment(hash)
-      ).then(() => {
-        logging.info(`Successfully deleted ${list.length} attachments`);
+        return Promise.map(list, (hash) => {
+          return this.delAttachment(hash);
+        }).then(() => {
+          logging.info(`Successfully deleted ${list.length} attachments`);
+        });
+      }).catch((error) => {
+        logging.error(error);
       });
-    }).catch((error) => {
-      logging.error(error);
     });
   }
 }
